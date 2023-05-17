@@ -13,7 +13,7 @@ GooglePolyline is a Swift package that provides functionality for encoding and d
 ### Swift Package Manager
 Add the following line to your dependencies in your `Package.swift` file:
 ```swift
-.package(url: "https://github.com/nicolaszimmer/GooglePolyline.git", from: "1.0.0"),
+.package(url: "https://github.com/podiumkit/GooglePolyline.git", from: "1.0.0"),
 ```
 Then, include `"GooglePolyline"` as a dependency for your target:
 ```swift
