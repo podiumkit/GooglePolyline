@@ -8,18 +8,18 @@ import MapKit
 
 public class GooglePolyline {
     
-    enum SimplificationFactor {
+    public enum SimplificationFactor {
         case automatic(maxLength:Int)
         case value(Double)
     }
     
     private let simplificationFactor: SimplificationFactor
     
-    init(simplificationFactor: SimplificationFactor = .automatic(maxLength:2048)) {
+    public init(simplificationFactor: SimplificationFactor = .automatic(maxLength:2048)) {
         self.simplificationFactor = simplificationFactor
     }
     
-    func encode(locations: [CLLocation]) -> String {
+    public func encode(locations: [CLLocation]) -> String {
         var coordinateString = ""
         guard !locations.isEmpty else { return coordinateString }
         var lastLat = 0
@@ -52,7 +52,7 @@ public class GooglePolyline {
         return coordinateString
     }
     
-    func decode(polyline: String) -> [CLLocation] {
+    public func decode(polyline: String) -> [CLLocation] {
         var locations: [CLLocation] = []
         
         var index = polyline.startIndex
@@ -75,7 +75,7 @@ public class GooglePolyline {
         return locations
     }
     
-    func decodeToMKPolyline(polyline: String) -> MKPolyline {
+    public func decodeToMKPolyline(polyline: String) -> MKPolyline {
         let locations = decode(polyline: polyline)
         let coordinates = locations.map { $0.coordinate }
         return MKPolyline(coordinates: coordinates, count: coordinates.count)
