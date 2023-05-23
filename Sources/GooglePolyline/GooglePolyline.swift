@@ -15,17 +15,13 @@ public class GooglePolyline {
     
     private let simplificationFactor: SimplificationFactor
     
-    public init(simplificationFactor: SimplificationFactor = .automatic(maxLength:2048)) {
+    public init(simplificationFactor: SimplificationFactor = .value(1)) {
         self.simplificationFactor = simplificationFactor
     }
     
     public func encode(locations: [CLLocation]) -> String {
-        var coordinateString = ""
-        guard !locations.isEmpty else { return coordinateString }
-        var lastLat = 0
-        var lastLng = 0
         
-        let factor: Double
+        var factor: Double
         switch simplificationFactor {
         case .automatic(let maxLength):
             factor = calculateSimplificationFactor(locations: locations, maxLength: maxLength)
@@ -35,7 +31,17 @@ public class GooglePolyline {
         
         let simplifiedLocations = factor != 1 ? simplify(locations, tolerance: factor) : locations
         
-        for location in simplifiedLocations {
+        return self._encode(locations: simplifiedLocations)
+    }
+    
+    private func _encode(locations: [CLLocation]) -> String {
+        
+        var coordinateString = ""
+        if locations.isEmpty { return coordinateString }
+        var lastLat = 0
+        var lastLng = 0
+        
+        for location in locations {
             let lat = Int(round(location.coordinate.latitude * 1e5))
             let lng = Int(round(location.coordinate.longitude * 1e5))
             
@@ -131,14 +137,13 @@ public class GooglePolyline {
     
     private func calculateSimplificationFactor(locations: [CLLocation], maxLength:Int = 2048) -> Double {
         var factor = 1.0
-        var encodedString = ""
-        
-        while true {
-            encodedString = encode(locations: locations)
-            if encodedString.count <= maxLength {
-                break
-            }
+        var encodedString = _encode(locations: locations)
+        var simplified:[CLLocation] = []
+
+        while encodedString.count > maxLength {
             factor += 0.5
+            simplified = simplify(locations, tolerance: factor)
+            encodedString = _encode(locations: simplified)
         }
         
         return factor
